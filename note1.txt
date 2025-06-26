@@ -1,0 +1,57 @@
+Person = 
+	[ID]
+	,[FirstName]
+	,[LastName]
+	,[Birthdate]
+	,[NationalCode]
+	,[Gender]
+	,[Address]
+	,[Mobile]
+	,[Photo]
+	,[EducationID]
+
+Education = 
+	[EducationID]
+	,[Education]
+
+Student:
+	[PersonID]
+	,[StudentCode]
+	,[Job]
+	-- Courses (drop box + add/del Btn)
+
+Teacher:
+	[PersonID]
+	,[TeacherCode]
+	,[MaritalStatus]
+	,[Startdate]
+	,[InsuranceNumber]
+	,[AccountNumber]
+	-- TeacherCertificate (drop box + add/del Btn)
+	-- Courses (drop box + add/del Btn)
+	
+Teacher-Certificattion:
+	[TeacherID=PersonID]
+	[CertificateID]
+	[ExpirationDate]
+	[resId]
+	
+Employee:
+	[PersonID]
+	,[EmployeeCode]
+	,[MaritalStatus]
+	,[JobID]
+	,[DepartmentID]
+	,[Hiredate]
+	,[InsuranceNumber]
+	,[AccountNumber]
+	,[ManagerID]
+	
+Department:
+		[ID]
+		,[DepartmentName]
+
+Job:
+	[ID]
+	[JobTitle]
+	
