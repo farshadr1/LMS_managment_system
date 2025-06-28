@@ -8,18 +8,21 @@ from tkcalendar import DateEntry
 import pyodbc
 from tkinter import filedialog
 from DataAccessLayer.db_access_settings import connection_string_sql_server
+from DataAccessLayer.PersonRepository import PersonRepository
 
-
-
+# ------------------------------------------------------------------------------
 class PersonForm:
     def __init__(self, userparam: UserModel):
         self.root = tk.Tk()
-        self.userparam = userparam
-        self.setup_main_window()
-        self.create_widgets()
         self.entryList = [('FirstName', 0, 0), ('LastName', 1, 0), ('NationalCode', 2, 0),
                           ('Mobile', 3, 0), ('Address', 4, 0),
                           ('Gender', 0, 2), ('Education', 1, 2), ('BirthDate', 2, 2)]
+        self.treeview_columns = ['FirstName', 'LastName', 'Gender', 'NationalCode', 'BirthDate',
+                                 'Mobile', 'Education', 'Address', 'PersonId', 'Photo']
+        self.userparam = userparam
+        self.setup_main_window()
+        self.create_widgets()
+        self.person_repo = PersonRepository()
 
     def setup_main_window(self):
         self.root.title("Persons Information")
@@ -51,12 +54,7 @@ class PersonForm:
         # crud Buttons Frame:
         self.btns_frame = tk.Frame(self.root, relief='groove', bd=2)
         self.btns_frame.grid(row=1, column=0, columnspan=2, padx=10, pady=0, sticky='nsew')
-
-        buttons = [('Select All', 0, 0), ('Search', 0, 1), ('Insert', 0, 2), ('Update', 0, 3), ('Delete', 0, 4)]
-        for button in buttons:
-            btn = ttk.Button(self.btns_frame, text=button[0], width=15,
-                             command=lambda t=button[0]: self.crud_btn_clicked(t), style='TButton')
-            btn.grid(row=button[1], column=button[2], padx=11, pady=5, sticky='w')
+        self.create_crud_buttons()
 
         # Table Frame:
         self.table_frame = tk.Frame(self.root, relief='groove', width=600, height=200)
@@ -64,25 +62,7 @@ class PersonForm:
         self.table_frame.grid_propagate(False)
         self.table_frame.grid_rowconfigure(0, weight=1)
         self.table_frame.grid_columnconfigure(0, weight=1)
-
-        self.treeview_columns = ['FirstName', 'LastName', 'Gender', 'NationalCode', 'BirthDate',
-                                 'Mobile', 'Education', 'Address', 'PersonId', 'Photo']
-        self.treeview = ttk.Treeview(self.table_frame, columns=self.treeview_columns, show="headings")
-        for col in self.treeview_columns:
-            self.treeview.heading(col, text=col)
-            if (col == 'PersonId'):  # Hide the 'PersonId' column
-                self.treeview.column(col, width=0, stretch=tk.NO)
-            else:
-                self.treeview.column(col, width=85, anchor='center')
-
-        scrollbar_y = ttk.Scrollbar(self.table_frame, orient="vertical", command=self.treeview.yview)
-        scrollbar_x = ttk.Scrollbar(self.table_frame, orient="horizontal", command=self.treeview.xview)
-        self.treeview.configure(yscrollcommand=scrollbar_y.set, xscrollcommand=scrollbar_x.set)
-        self.treeview.grid(row=0, column=0, sticky="nsew")
-        scrollbar_y.grid(row=0, column=1, sticky="ns")
-        scrollbar_x.grid(row=1, column=0, sticky="ew")
-
-        self.treeview.bind('<<TreeviewSelect>>', self.on_treeview_select)
+        self.create_treeview_widgets()
 
     def create_photoFrame_widgets(self):
         self.default_image_path = './images/profile_pic.png'
@@ -104,7 +84,6 @@ class PersonForm:
         self.photo_frame.grid_columnconfigure(0, weight=1)
 
     def create_form_widgets(self):
-        print(self)
         for item in self.entryList:
             var = tk.StringVar()
             lbl = tk.Label(self.form_frame, text=item[0])
@@ -141,6 +120,31 @@ class PersonForm:
         self.btn_clear.grid(row=6, column=4, padx=5, pady=5, sticky='w')
         self.btn_backToMainForm = ttk.Button(self.form_frame, text='Back', width=10, command=self.backToMainForm)
         self.btn_backToMainForm.grid(row=6, column=4, padx=5, pady=5, sticky='e')
+
+    def create_crud_buttons(self):
+        buttons = [('Select All', 0, 0), ('Search', 0, 1), ('Insert', 0, 2), ('Update', 0, 3), ('Delete', 0, 4)]
+        for button in buttons:
+            btn = ttk.Button(self.btns_frame, text=button[0], width=15,
+                             command=lambda t=button[0]: self.crud_btn_clicked(t), style='TButton')
+            btn.grid(row=button[1], column=button[2], padx=11, pady=5, sticky='w')
+
+    def create_treeview_widgets(self):
+        self.treeview = ttk.Treeview(self.table_frame, columns=self.treeview_columns, show="headings")
+        for col in self.treeview_columns:
+            self.treeview.heading(col, text=col)
+            if (col == 'PersonId'):  # Hide the 'PersonId' column
+                self.treeview.column(col, width=0, stretch=tk.NO)
+            else:
+                self.treeview.column(col, width=85, anchor='center')
+
+        scrollbar_y = ttk.Scrollbar(self.table_frame, orient="vertical", command=self.treeview.yview)
+        scrollbar_x = ttk.Scrollbar(self.table_frame, orient="horizontal", command=self.treeview.xview)
+        self.treeview.configure(yscrollcommand=scrollbar_y.set, xscrollcommand=scrollbar_x.set)
+        self.treeview.grid(row=0, column=0, sticky="nsew")
+        scrollbar_y.grid(row=0, column=1, sticky="ns")
+        scrollbar_x.grid(row=1, column=0, sticky="ew")
+
+        self.treeview.bind('<<TreeviewSelect>>', self.on_treeview_select)
 
     def on_treeview_select(self, event):
         selected_item = self.treeview.selection()
@@ -186,7 +190,6 @@ class PersonForm:
         self.lbl_photo.configure(image=photo)
         self.lbl_photo.image = photo
 
-
     def copy(self, event):
         self.root.clipboard_clear()
         if event.widget.selection_get():
@@ -221,6 +224,7 @@ class PersonForm:
             else:
                 result[key] = value.get()
         return result
+
     def read_picture(self):
         if self.current_image_path != self.default_image_path:
             with Image.open(self.current_image_path) as image:
@@ -261,76 +265,33 @@ class PersonForm:
     def crud_btn_clicked(self, t: str):
         if t == 'Select All':
             self.treeview.delete(*self.treeview.get_children())
-            command_text_sql_server = '''
-                SELECT [FirstName], [LastName], [Gender], [NationalCode], [Birthdate],
-                        [Mobile], [Education], [Address], Person.ID, [Photo] FROM Person
-                JOIN Education on Person.EducationID = Education.ID;    
-            '''
-            with pyodbc.connect(self.connection_string_sql_server) as connection_sql_server:
-                cursor = connection_sql_server.cursor()
-                cursor.execute(command_text_sql_server)
-                tree_rows = cursor.fetchall()
-            for row in tree_rows:
+            rows = self.person_repo.select_all()
+            for row in rows:
                 isPhoto = (True,) if row[-1] else (None,)
                 self.treeview.insert("", "end", values=list(row[:-1]+isPhoto))
 
         elif t == 'Search':
             vals = self.read_form()
             self.treeview.delete(*self.treeview.get_children())
-            command_text_sql_server = '''
-                            SELECT [FirstName], [LastName], [Gender], [NationalCode], [Birthdate],
-                                    [Mobile], [Education], [Address], Person.ID, [Photo] FROM Person
-                            JOIN Education on Person.EducationID = Education.ID  
-                            WHERE [FirstName]=? or [LastName]=? or [Gender]=? or [NationalCode]=? or [Birthdate]=? or
-                                    [Mobile]=? or [Education]=? or [Address]=? or Person.ID=?;
-                        '''
-            with pyodbc.connect(self.connection_string_sql_server) as connection_sql_server:
-                cursor = connection_sql_server.cursor()
-                values = (
-                    vals['FirstName'],
-                    vals['LastName'],
-                    vals['Gender'],
-                    vals['NationalCode'],
-                    vals['BirthDate'],
-                    vals['Mobile'],
-                    vals['Education'],
-                    vals['Address'],
-                    self.PersonID
+            values = (
+                    vals['FirstName'], vals['LastName'], vals['Gender'], vals['NationalCode'], vals['BirthDate'],
+                    vals['Mobile'], vals['Education'], vals['Address'], self.PersonID
                 )
-                cursor.execute(command_text_sql_server, values)
-                tree_rows = cursor.fetchall()
-
-            for row in tree_rows:
+            rows = self.person_repo.search(values)
+            for row in rows:
                 self.treeview.insert("", "end", values=list(row))
 
         elif t == 'Insert':
             vals = self.read_form()
             photo = self.read_picture()
-            insert_command_text = '''
-                INSERT INTO Person([FirstName], [LastName], [Birthdate], [NationalCode], [Gender],
-                                    [Address], [Mobile], [EducationID], [Photo])
-                OUTPUT INSERTED.ID
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
-            '''
+            values = (
+                vals['FirstName'], vals['LastName'], vals['BirthDate'], vals['NationalCode'],
+                vals['Gender'], vals['Address'], vals['Mobile'], vals['Education'], photo
+            )
             try:
-                with pyodbc.connect(self.connection_string_sql_server) as connection_sql_server:
-                    cursor = connection_sql_server.cursor()
-                    values = (
-                        vals['FirstName'],
-                        vals['LastName'],
-                        vals['BirthDate'],
-                        vals['NationalCode'],
-                        vals['Gender'],
-                        vals['Address'],
-                        vals['Mobile'],
-                        vals['Education'],
-                        photo
-                    )
-                    cursor.execute(insert_command_text, values)
-                    inserted_id = cursor.fetchone()[0]
-                    connection_sql_server.commit()
+                self.person_repo.insert(values)
                 msg.showinfo("Success", "Record inserted successfully.")
-            except pyodbc.Error as e:
+            except Exception as e:
                 msg.showerror("Error", f"An error occurred: {str(e)}")
 
         elif t == 'Update':
@@ -340,34 +301,17 @@ class PersonForm:
                 confirm = msg.askyesno("Confirm Update",
                                        f"Are you sure want to Update {vals['FirstName']} {vals['LastName']} record?")
                 if confirm:
-                    insert_command_text = '''
-                                    UPDATE Person
-                                    SET [FirstName]=?, [LastName]=?, [Birthdate]=?, [NationalCode]=?, [Gender]=?,
-                                                        [Address]=?, [Mobile]=?, [EducationID]=?, [Photo]=?
-                                    WHERE [ID]=?;
-                                '''
+                    values = (
+                        vals['FirstName'], vals['LastName'], vals['BirthDate'], vals['NationalCode'],
+                        vals['Gender'], vals['Address'], vals['Mobile'], vals['Education'], photo, self.PersonID
+                    )
                     try:
-                        with pyodbc.connect(self.connection_string_sql_server) as connection_sql_server:
-                            cursor = connection_sql_server.cursor()
-                            values = (
-                                vals['FirstName'],
-                                vals['LastName'],
-                                vals['BirthDate'],
-                                vals['NationalCode'],
-                                vals['Gender'],
-                                vals['Address'],
-                                vals['Mobile'],
-                                vals['Education'],
-                                photo,
-                                self.PersonID
-                            )
-                            cursor.execute(insert_command_text, values)
-                            connection_sql_server.commit()
+                        self.person_repo.update(values)
                         msg.showinfo("Success", f"Record Updated successfully.")
                     except pyodbc.Error as e:
                         msg.showerror("Error", f"An error occurred: {str(e)}")
                 else:
-                    msg.showwarning("Not Allow", "Please select a record to update.")
+                    pass
 
         elif t == 'Delete':
             if self.PersonID != '':
@@ -375,13 +319,8 @@ class PersonForm:
                 confirm = msg.askyesno("Confirm Delete",
                                        f"Are you sure want to delete {vals['FirstName']} {vals['LastName']} record?")
                 if confirm:
-                    insert_command_text = "DELETE FROM Person WHERE [ID]=?;"
                     try:
-                        with pyodbc.connect(self.connection_string_sql_server) as connection_sql_server:
-                            cursor = connection_sql_server.cursor()
-                            values = (self.PersonID,)
-                            cursor.execute(insert_command_text, values)
-                            connection_sql_server.commit()
+                        self.person_repo.delete(self.PersonID)
                         msg.showinfo("Success", "Record deleted successfully.")
                         self.clear_form()
                         self.crud_btn_clicked('Select All')
