@@ -106,6 +106,17 @@ class PersonForm:
                 ent['values'] = ('دیپلم', 'فوق دیپلم', 'لیسانس', 'فوق لیسانس', 'دکترا')
                 ent['state'] = 'readonly'
                 ent.grid(row=item[1], column=item[2] + 2, padx=5, pady=5, sticky='w')
+            elif item[0] == 'Courses':
+                self.courses_frame = tk.Frame(self.form_frame)
+                self.courses_frame.grid(row=item[1], column=item[2] + 2, sticky='w')
+                ent = ttk.Combobox(self.courses_frame, textvariable=var, width=15)
+                ent['values'] = ()
+                ent['state'] = 'readonly'
+                ent.grid(row=0, column=0, padx=5, pady=5, sticky='w')
+                btn_remove = ttk.Button(self.courses_frame, text='-', width=2, command=self.remove_course)
+                btn_remove.grid(row=0, column=1, padx=0, pady=5, sticky='w')
+                btn_add = ttk.Button(self.courses_frame, text='+', width=2, command=self.add_course)
+                btn_add.grid(row=0, column=2, padx=0, pady=5, sticky='w')
             else:
                 ent = ttk.Entry(self.form_frame, textvariable=var, width=25)
                 ent.grid(row=item[1], column=item[2] + 2, padx=5, pady=5, sticky='w')
