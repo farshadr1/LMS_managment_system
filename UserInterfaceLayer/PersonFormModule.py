@@ -14,9 +14,7 @@ from DataAccessLayer.PersonRepository import PersonRepository
 class PersonForm:
     def __init__(self, userparam: UserModel):
         self.root = tk.Tk()
-        self.entryList = [('FirstName', 0, 0), ('LastName', 1, 0), ('NationalCode', 2, 0),
-                          ('Mobile', 3, 0), ('Address', 4, 0),
-                          ('Gender', 0, 2), ('Education', 1, 2), ('BirthDate', 2, 2)]
+        # self.entryList = []
         self.treeview_columns = ['FirstName', 'LastName', 'Gender', 'NationalCode', 'BirthDate',
                                  'Mobile', 'Education', 'Address', 'PersonId', 'Photo']
         self.userparam = userparam
@@ -339,3 +337,9 @@ class PersonForm:
                         msg.showerror("Error", f"An error occurred: {str(e)}")
             else:
                 msg.showwarning("Not Allowed", "Please select a record to delete.")
+
+    def add_course(self):
+        pass
+
+    def remove_course(self):
+        pass

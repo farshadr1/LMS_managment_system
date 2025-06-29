@@ -14,10 +14,10 @@ class MainForm:
 
     def setup_main_window(self):
         self.root.title('MainForm...')
-        self.root.geometry('360x320')
+        self.root.geometry('360x290')
         self.root.resizable(False, False)
         x = int(self.root.winfo_screenwidth() / 2 - 360 / 2)
-        y = int(self.root.winfo_screenheight() / 2 - 320 / 2)
+        y = int(self.root.winfo_screenheight() / 2 - 290 / 2)
         self.root.geometry(f'+{x}+{y}')
         self.root.iconbitmap('./images/home.ico')
         self.style = ttk.Style()
@@ -47,7 +47,7 @@ class MainForm:
 
         # Load and resize images
         self.images = {
-            'Persons': self.load_and_resize_image('./images/persons.png'),
+            # 'Persons': self.load_and_resize_image('./images/persons.png'),
             'Students': self.load_and_resize_image('./images/students.png'),
             'Teachers': self.load_and_resize_image('./images/teachers.png'),
             'Employees': self.load_and_resize_image('./images/employees.png'),
@@ -55,7 +55,7 @@ class MainForm:
         }
 
         self.buttons = [
-            ('Persons', self.open_persons_form),
+            # ('Persons', self.open_persons_form),
             ('Students', self.open_students_form),
             ('Teachers', self.open_teachers_form),
             ('Employees', self.open_employees_form),
