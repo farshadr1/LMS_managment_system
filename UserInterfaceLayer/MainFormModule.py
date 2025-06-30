@@ -84,10 +84,10 @@ class MainForm:
     def on_leave(self, event):
         self.image_label.config(image='')
 
-    def open_persons_form(self):
-        from UserInterfaceLayer.PersonFormModule import PersonForm
-        self.root.destroy()
-        PersonForm(self.userparam)
+    # def open_persons_form(self):
+    #     from UserInterfaceLayer.PersonFormModule import BaseForm
+    #     self.root.destroy()
+    #     PersonForm(self.userparam)
 
     def open_students_form(self):
         from UserInterfaceLayer.StudentFormModule import StudentForm

@@ -11,7 +11,7 @@ from DataAccessLayer.db_access_settings import connection_string_sql_server
 from DataAccessLayer.PersonRepository import PersonRepository
 
 # ------------------------------------------------------------------------------
-class PersonForm:
+class BaseForm:
     def __init__(self, userparam: UserModel):
         self.root = tk.Tk()
         # self.entryList = []
@@ -23,13 +23,13 @@ class PersonForm:
         self.person_repo = PersonRepository()
 
     def setup_main_window(self):
-        self.root.title("Persons Information")
+        # self.root.title("Persons Information")
         self.root.geometry("640x470")
         self.root.resizable(False, False)
         x = int(self.root.winfo_screenwidth() / 2 - 640 / 2)
         y = int(self.root.winfo_screenheight() / 2 - 470 / 2)
         self.root.geometry(f'+{x}+{y}')
-        self.root.iconbitmap('./images/persons.ico')
+        # self.root.iconbitmap('./images/persons.ico')
         self.style = ttk.Style()
         # self.style.configure('TButton', font=('Arial', 10))
         self.style.map('TButton',
