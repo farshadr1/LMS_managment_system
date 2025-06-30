@@ -353,3 +353,12 @@ class BaseForm:
 
     def remove_course(self):
         pass
+
+    def validate_national_code(self, national_code):
+        """Validate and find person when national code is entered"""
+        if national_code.strip().isnumeric() and len(national_code.strip())!=10:  # Only search if national code is not empty
+            try:
+                # Assuming FindPerson is a method in your class
+                self.FindPerson(national_code)
+            except Exception as e:
+                msg.showerror("Error", f"Error finding person: {str(e)}")

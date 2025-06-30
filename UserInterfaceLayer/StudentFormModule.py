@@ -12,7 +12,7 @@ from tkinter import filedialog
 
 class StudentForm(BaseForm):
     def __init__(self, userparam: UserModel):
-        self.entryList = [('FirstName', 0, 0), ('LastName', 1, 0), ('NationalCode', 2, 0),
+        self.entryList = [('NationalCode', 0, 0), ('FirstName', 1, 0), ('LastName', 2, 0),
                           ('StudentCode', 3, 0), ('Mobile', 4, 0), ('Address', 5, 0),
                           ('Gender', 0, 2),
                           ('Education', 1, 2, ('دیپلم', 'فوق دیپلم', 'لیسانس', 'فوق لیسانس', 'دکترا')),
