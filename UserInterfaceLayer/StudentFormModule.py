@@ -14,7 +14,11 @@ class StudentForm(BaseForm):
     def __init__(self, userparam: UserModel):
         self.entryList = [('FirstName', 0, 0), ('LastName', 1, 0), ('NationalCode', 2, 0),
                           ('StudentCode', 3, 0), ('Mobile', 4, 0), ('Address', 5, 0),
-                      ('Gender', 0, 2), ('Education', 1, 2), ('BirthDate', 2, 2), ('Job', 3, 2), ('Courses', 4, 2)]
+                          ('Gender', 0, 2),
+                          ('Education', 1, 2, ('دیپلم', 'فوق دیپلم', 'لیسانس', 'فوق لیسانس', 'دکترا')),
+                          ('BirthDate', 2, 2), ('Job', 3, 2), ('Courses', 4, 2)]
+        self.treeview_columns = ['FirstName', 'LastName', 'Gender', 'NationalCode', 'BirthDate',
+                                 'Mobile', 'Education', 'Address', 'PersonId', 'Photo']
         super().__init__(userparam)
         self.root.geometry("640x500")
         self.root.title("Student Form")

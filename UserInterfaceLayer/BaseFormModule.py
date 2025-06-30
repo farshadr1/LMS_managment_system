@@ -15,8 +15,7 @@ class BaseForm:
     def __init__(self, userparam: UserModel):
         self.root = tk.Tk()
         # self.entryList = []
-        self.treeview_columns = ['FirstName', 'LastName', 'Gender', 'NationalCode', 'BirthDate',
-                                 'Mobile', 'Education', 'Address', 'PersonId', 'Photo']
+        # self.treeview_columns = []
         self.userparam = userparam
         self.setup_main_window()
         self.create_widgets()
@@ -24,7 +23,7 @@ class BaseForm:
 
     def setup_main_window(self):
         # self.root.title("Persons Information")
-        self.root.geometry("640x470")
+        # self.root.geometry("640x470")
         self.root.resizable(False, False)
         x = int(self.root.winfo_screenwidth() / 2 - 640 / 2)
         y = int(self.root.winfo_screenheight() / 2 - 470 / 2)
@@ -93,18 +92,25 @@ class BaseForm:
                 radio_female = ttk.Radiobutton(self.gender_frame, text="Female", variable=var, value="خانم")
                 radio_male.grid(row=0, column=0, padx=2, pady=5, sticky='w')
                 radio_female.grid(row=0, column=1, padx=2, pady=5, sticky='w')
-            elif item[0] == 'BirthDate':
+            elif item[0] == 'MaritalStatus':
+                self.Marital_frame = tk.Frame(self.form_frame)
+                self.Marital_frame.grid(row=item[1], column=item[2] + 2, sticky='w')
+                radio_male = ttk.Radiobutton(self.Marital_frame, text="married", variable=var, value="متاهل")
+                radio_female = ttk.Radiobutton(self.Marital_frame, text="single", variable=var, value="مجرد")
+                radio_male.grid(row=0, column=0, padx=2, pady=5, sticky='w')
+                radio_female.grid(row=0, column=1, padx=2, pady=5, sticky='w')
+            elif item[0] == 'BirthDate' or item[0] == 'HireDate':
                 ent = DateEntry(self.form_frame, textvariable=var, date_pattern='yyyy-mm-dd', width=22)
                 ent.grid(row=item[1], column=item[2] + 2, padx=5, pady=5, sticky='w')
             elif item[0] == 'Address':
                 ent = ttk.Entry(self.form_frame, textvariable=var, width=25)
                 ent.grid(row=item[1], column=item[2] + 2, columnspan=3, padx=5, pady=5, sticky='we')
-            elif item[0] == 'Education':
+            elif item[0] == 'Education' or item[0] == 'Position':
                 ent = ttk.Combobox(self.form_frame, textvariable=var, width=22)
-                ent['values'] = ('دیپلم', 'فوق دیپلم', 'لیسانس', 'فوق لیسانس', 'دکترا')
+                ent['values'] = item[3]
                 ent['state'] = 'readonly'
                 ent.grid(row=item[1], column=item[2] + 2, padx=5, pady=5, sticky='w')
-            elif item[0] == 'Courses':
+            elif item[0] == 'Courses' or item[0] == 'Certificates':
                 self.courses_frame = tk.Frame(self.form_frame)
                 self.courses_frame.grid(row=item[1], column=item[2] + 2, sticky='w')
                 ent = ttk.Combobox(self.courses_frame, textvariable=var, width=15)
@@ -115,6 +121,10 @@ class BaseForm:
                 btn_remove.grid(row=0, column=1, padx=0, pady=5, sticky='w')
                 btn_add = ttk.Button(self.courses_frame, text='+', width=2, command=self.add_course)
                 btn_add.grid(row=0, column=2, padx=0, pady=5, sticky='w')
+            elif item[0] == 'NationalCode':
+                ent = ttk.Entry(self.form_frame, textvariable=var, width=25)
+                ent.grid(row=item[1], column=item[2] + 2, padx=5, pady=5, sticky='w')
+                ent.bind('<FocusOut>', lambda e: self.validate_national_code(var.get()))
             else:
                 ent = ttk.Entry(self.form_frame, textvariable=var, width=25)
                 ent.grid(row=item[1], column=item[2] + 2, padx=5, pady=5, sticky='w')
