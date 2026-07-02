@@ -1,6 +1,6 @@
 # LMS Management System
 
-A desktop-based Learning Management System (LMS) designed for educational institutions, developed in Python using the Tkinter GUI library. The system provides an intuitive and organized interface for performing CRUD operations on key entities including students, teachers, employees, and courses.
+A desktop-based Learning Management System (LMS) designed for educational institutions, developed in Python using the Tkinter GUI library. The system provides an intuitive and organized interface for [...]
 
 ## 📋 Features
 
@@ -62,14 +62,28 @@ The project follows a **three-layer architecture pattern**:
    pip install pyodbc pillow tkcalendar
    ```
 
-3. **Configure Database Connection**
+3. **Restore SQL Server Database**
+   - A backup file `LMS_14040321_Ravaee.bak` is available for the database
+   - **Using SQL Server Management Studio (SSMS)**:
+     - Connect to your SQL Server instance
+     - Right-click on **Databases** → **Restore Database**
+     - Select **Device** and browse to `LMS_14040321_Ravaee.bak`
+     - Complete the restore wizard
+   - **Using T-SQL**:
+     ```sql
+     RESTORE DATABASE [LMS_Management] 
+     FROM DISK = 'path/to/LMS_14040321_Ravaee.bak'
+     ```
+   - Note the restored database name and ensure it matches the connection string
+
+4. **Configure Database Connection**
    - Edit `DataAccessLayer/db_access_settings.py`
-   - Update the connection string with your SQL Server credentials:
+   - Update the connection string with your SQL Server credentials and database name:
    ```python
    connection_string_sql_server = 'Driver={ODBC Driver 17 for SQL Server};Server=YOUR_SERVER;Database=YOUR_DATABASE;UID=YOUR_USER;PWD=YOUR_PASSWORD'
    ```
 
-4. **Run the Application**
+5. **Run the Application**
    ```bash
    python main.py
    ```
